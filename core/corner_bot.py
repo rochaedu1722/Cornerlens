@@ -41,19 +41,27 @@ def analisar_jogos():
             if not stats_casa or not stats_fora:
                 continue
 
-            media_casa = stats_casa["response"]["fixtures"]["corners"]["for"]["total"] / max(stats_casa["response"]["fixtures"]["played"]["total"], 1)
-            media_fora = stats_fora["response"]["fixtures"]["corners"]["for"]["total"] / max(stats_fora["response"]["fixtures"]["played"]["total"], 1)
+            jogos_casa = max(stats_casa["response"]["fixtures"]["played"]["total"], 1)
+            jogos_fora = max(stats_fora["response"]["fixtures"]["played"]["total"], 1)
+
+            escanteios_casa = stats_casa["response"]["fixtures"]["corners"]["for"]["total"]
+            escanteios_fora = stats_fora["response"]["fixtures"]["corners"]["for"]["total"]
+
+            media_casa = escanteios_casa / jogos_casa
+            media_fora = escanteios_fora / jogos_fora
 
             media_total = round(media_casa + media_fora, 2)
             prob_over_10_5 = min(round((media_total - 8.5) * 10, 1), 90.0)
 
             if media_total >= 10 and prob_over_10_5 >= 65:
-                mensagem = f"📢 Alerta de Escanteios:
-🏆 {liga}
-🏟 {time_casa} x {time_fora}
-📊 Média real: {media_total} escanteios
-🎯 Prob. Over 10.5: {prob_over_10_5}%
-🕓 {data}"
+                mensagem = (
+                    f"ð¢ Alerta de Escanteios:\n"
+                    f"ð {liga}\n"
+                    f"ð {time_casa} x {time_fora}\n"
+                    f"ð MÃ©dia real: {media_total} escanteios\n"
+                    f"ð¯ Prob. Over 10.5: {prob_over_10_5}%\n"
+                    f"ð {data}"
+                )
                 enviar_telegram(mensagem)
         except Exception as e:
             print("Erro ao processar jogo:", e)
